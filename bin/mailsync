@@ -36,10 +36,7 @@ case "$(uname)" in
 	Darwin) notify() { osascript -e "display notification \"$2\" with title \"$1\"" ;} ;;
 	*)
 	case "$(readlink -f /sbin/init)" in
-    # Luke's method of getting user session bus address
-		# *systemd*|*openrc*) export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus ;;
-    # Manually defining the dbus address works better for me
-		*systemd*|*openrc*) . $HOME/.local/bin/cron/dbus ;;
+		*systemd*|*openrc*) export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus ;;
 	esac
 	# remember if a display server is running since `ps` doesn't always contain a display
 	pgrepoutput="$(pgrep -ax X\(\|org\|wayland\))"
