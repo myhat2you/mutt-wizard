@@ -36,7 +36,12 @@ case "$(uname)" in
 	Darwin) notify() { osascript -e "display notification \"$2\" with title \"$1\"" ;} ;;
 	*)
 	case "$(readlink -f /sbin/init)" in
-		*systemd*|*openrc*) export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus ;;
+		*systemd*|*openrc*) 
+            # Check if DBUS_SESSION_BUS_ADDRESS is set. If not, initialize a new session.
+            PID=$(pgrep startx)
+            export DBUS_SESSION_BUS_ADDRESS=$(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$PID/environ|cut -d= -f2-|sed 's/\0x//g')
+            export DISPLAY=:0
+            ;;
 	esac
 	# remember if a display server is running since `ps` doesn't always contain a display
 	pgrepoutput="$(pgrep -ax X\(\|org\|wayland\))"
